@@ -1,16 +1,5 @@
 import styled from 'styled-components';
 
-// switch (props.size) {
-//   case 'sm':
-//     return '24px';
-//   case 'md':
-//     return '36px';
-//   case 'lg':
-//     return '48px';
-//   default:
-//     return '24px';
-// }
-
 const btnSize = {
   sm: 24,
   md: 36,
@@ -30,6 +19,7 @@ export const Button = styled.button`
   color: ${props => (props.variant === 'primary' ? 'red' : 'blue')};
 
   svg {
+    display: block;
     width: 100%;
     height: 100%;
   }
