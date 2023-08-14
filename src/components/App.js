@@ -4,14 +4,44 @@ import { SearchBar } from './SearchBar/SearchBar';
 import { Layout } from './Layout';
 import { Component } from 'react';
 import { QuizForm } from './QuizForm/QuizForm';
+import { LevelFilter } from './LevelFilter';
+import { TopicFilter } from './TopicFilter';
+
+const localStorageKey = 'quiz-filters';
+
+const intialFilters = {
+  topic: '',
+  level: 'all',
+};
 
 export class App extends Component {
   state = {
     quizItems: initialQuizItems,
-    filters: {
-      topic: '',
-      level: 'all',
-    },
+    filters: intialFilters,
+  };
+
+  componentDidMount() {
+    const savedFilters = localStorage.getItem(localStorageKey);
+    if (savedFilters !== null) {
+      this.setState({
+        filters: JSON.parse(savedFilters),
+      });
+    }
+  }
+
+  componentDidUpdate(prevProps, prevState) {
+    const { filters: prevFilters } = prevState;
+    const { filters: nextFilters } = this.state;
+
+    if (prevFilters !== nextFilters) {
+      localStorage.setItem(localStorageKey, JSON.stringify(nextFilters));
+    }
+  }
+
+  resetFilters = () => {
+    this.setState({
+      filters: intialFilters,
+    });
   };
 
   changeTopicFilter = newTopic => {
@@ -58,10 +88,8 @@ export class App extends Component {
 
     return quizItems.filter(quiz => {
       const hasTopic = quiz.topic.toLowerCase().includes(lowerCaseTopic);
-      if (filters.level === 'all') {
-        return hasTopic;
-      }
-      return hasTopic && quiz.level === filters.level;
+      const hasMatchingLevel = quiz.level === filters.level;
+      return filters.level === 'all' ? hasTopic : hasTopic && hasMatchingLevel;
     });
   };
 
@@ -71,12 +99,16 @@ export class App extends Component {
 
     return (
       <Layout>
-        <SearchBar
-          topicFilter={filters.topic}
-          levelFilter={filters.level}
-          onChangeTopic={this.changeTopicFilter}
-          onChangeLevel={this.changeLevelFilter}
-        />
+        <SearchBar onReset={this.resetFilters}>
+          <TopicFilter
+            value={filters.topic}
+            onChange={this.changeTopicFilter}
+          />
+          <LevelFilter
+            value={filters.level}
+            onChange={this.changeLevelFilter}
+          />
+        </SearchBar>
         <QuizForm onAdd={this.addQuiz} />
         <QuizList items={visibleQuizItems} onDelete={this.handleDelete} />
       </Layout>
