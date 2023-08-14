@@ -1,7 +1,7 @@
 import { Formik } from 'formik';
 import * as Yup from 'yup';
 import { nanoid } from 'nanoid';
-import { StyledForm, StyledField, StyledError } from './QuizForm.styled';
+import { StyledForm, StyledField, StyledError, Label } from './QuizForm.styled';
 
 const schema = Yup.object().shape({
   topic: Yup.string().min(1, 'Too Short!').required('Required'),
@@ -34,13 +34,13 @@ export const QuizForm = ({ onAdd }) => {
       }}
     >
       <StyledForm>
-        <label>
+        <Label>
           Topic
           <StyledField name="topic" placeholder="Quiz topic..." />
           <StyledError name="topic" component="div" />
-        </label>
+        </Label>
 
-        <label>
+        <Label>
           Level
           <StyledField as="select" name="level">
             <option value="beginner">Beginner</option>
@@ -48,19 +48,19 @@ export const QuizForm = ({ onAdd }) => {
             <option value="advanced">Advanced</option>
           </StyledField>
           <StyledError name="level" component="div" />
-        </label>
+        </Label>
 
-        <label>
+        <Label>
           Time
           <StyledField name="time" type="number" />
           <StyledError name="time" component="div" />
-        </label>
+        </Label>
 
-        <label>
+        <Label>
           Questions
           <StyledField name="questions" type="number" />
           <StyledError name="questions" component="div" />
-        </label>
+        </Label>
 
         <button type="submit">Submit</button>
       </StyledForm>

@@ -71,13 +71,13 @@ export class App extends Component {
 
     return (
       <Layout>
+        <QuizForm onAdd={this.addQuiz} />
         <SearchBar
           topicFilter={filters.topic}
           levelFilter={filters.level}
           onChangeTopic={this.changeTopicFilter}
           onChangeLevel={this.changeLevelFilter}
         />
-        <QuizForm onAdd={this.addQuiz} />
         <QuizList items={visibleQuizItems} onDelete={this.handleDelete} />
       </Layout>
     );
