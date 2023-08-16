@@ -1,6 +1,5 @@
 import { Formik } from 'formik';
 import * as Yup from 'yup';
-import { nanoid } from 'nanoid';
 import { StyledForm, StyledField, StyledError } from './QuizForm.styled';
 
 const schema = Yup.object().shape({
@@ -29,7 +28,7 @@ export const QuizForm = ({ onAdd }) => {
       }}
       validationSchema={schema}
       onSubmit={(values, actions) => {
-        onAdd({ ...values, id: nanoid() });
+        onAdd(values);
         actions.resetForm();
       }}
     >

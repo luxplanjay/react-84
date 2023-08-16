@@ -1,11 +1,11 @@
 import { QuizList } from './QuizList/QuizList';
-import initialQuizItems from '../data.json';
 import { SearchBar } from './SearchBar/SearchBar';
 import { Layout } from './Layout';
 import { Component } from 'react';
 import { QuizForm } from './QuizForm/QuizForm';
 import { LevelFilter } from './LevelFilter';
 import { TopicFilter } from './TopicFilter';
+import { createQuiz, deleteQuiz, fetchQuizzes } from 'api';
 
 const localStorageKey = 'quiz-filters';
 
@@ -16,16 +16,25 @@ const intialFilters = {
 
 export class App extends Component {
   state = {
-    quizItems: initialQuizItems,
+    quizItems: [],
     filters: intialFilters,
+    loading: false,
   };
 
-  componentDidMount() {
+  async componentDidMount() {
     const savedFilters = localStorage.getItem(localStorageKey);
     if (savedFilters !== null) {
       this.setState({
         filters: JSON.parse(savedFilters),
       });
+    }
+
+    try {
+      this.setState({ loading: true });
+      const quizItems = await fetchQuizzes();
+      this.setState({ quizItems, loading: false });
+    } catch (error) {
+      console.log(error);
     }
   }
 
@@ -66,20 +75,28 @@ export class App extends Component {
     });
   };
 
-  handleDelete = quizId => {
-    this.setState(prevState => {
-      return {
-        quizItems: prevState.quizItems.filter(quiz => quiz.id !== quizId),
-      };
-    });
+  handleDelete = async quizId => {
+    try {
+      const deletedQuiz = await deleteQuiz(quizId);
+      this.setState(prevState => ({
+        quizItems: prevState.quizItems.filter(
+          quiz => quiz.id !== deletedQuiz.id
+        ),
+      }));
+    } catch (error) {
+      console.log(error);
+    }
   };
 
-  addQuiz = newQuiz => {
-    this.setState(prevState => {
-      return {
-        quizItems: [...prevState.quizItems, newQuiz],
-      };
-    });
+  addQuiz = async newQuiz => {
+    try {
+      const createdQuiz = await createQuiz(newQuiz);
+      this.setState(prevState => ({
+        quizItems: [...prevState.quizItems, createdQuiz],
+      }));
+    } catch (error) {
+      console.log(error);
+    }
   };
 
   getVisibleQuizItems = () => {
@@ -94,7 +111,7 @@ export class App extends Component {
   };
 
   render() {
-    const { filters } = this.state;
+    const { filters, loading } = this.state;
     const visibleQuizItems = this.getVisibleQuizItems();
 
     return (
@@ -110,7 +127,12 @@ export class App extends Component {
           />
         </SearchBar>
         <QuizForm onAdd={this.addQuiz} />
-        <QuizList items={visibleQuizItems} onDelete={this.handleDelete} />
+
+        {loading ? (
+          <div>LOADING...</div>
+        ) : (
+          <QuizList items={visibleQuizItems} onDelete={this.handleDelete} />
+        )}
       </Layout>
     );
   }
