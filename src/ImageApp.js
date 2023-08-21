@@ -1,59 +1,46 @@
-const { Component } = require('react');
+const { useState, useEffect } = require('react');
 
-export class ImageApp extends Component {
-  state = {
-    query: '',
-    images: [],
-    page: 1,
+const ImageApp = () => {
+  const [query, setQuery] = useState('');
+  const [images, setImages] = useState([]);
+  const [page, setPage] = useState(1);
+
+  const changeQuery = newQuery => {
+    setQuery(`${Date.now()}/${newQuery}`);
+    setImages([]);
+    setPage(1);
   };
 
-  changeQuery = newQuery => {
-    this.setState({
-      query: `${Date.now()}/${newQuery}`,
-      images: [],
-      page: 1,
-    });
+  const handleLoadMore = () => {
+    setPage(prevState => prevState + 1);
   };
 
-  componentDidUpdate(prevProps, prevState) {
-    if (
-      prevState.query !== this.state.query ||
-      prevState.page !== this.state.page
-    ) {
-      console.log(
-        `HTTP запрос за ${this.state.query}, и page=${this.state.page}`
-      );
-      // Не забываем отрезать req-id/ от query
-      // this.setState({ images: результат запроса })
-    }
-  }
+  useEffect(() => {
+    if (query === '') return;
 
-  handleLoadMore = () => {
-    this.setState(prevState => ({ page: prevState.page + 1 }));
-  };
+    console.log(`HTTP запрос за ${query}, и page=${page}`);
+  }, [page, query]);
 
-  render() {
-    return (
+  return (
+    <div>
       <div>
-        <div>
-          <form
-            onSubmit={evt => {
-              evt.preventDefault();
-              this.changeQuery(evt.target.elements.query.value);
-              evt.target.reset();
-            }}
-          >
-            <input type="text" name="query" />
-            <button type="submit">Submit</button>
-          </form>
-        </div>
-
-        <div>Gallery</div>
-
-        <div>
-          <button onClick={this.handleLoadMore}>Load more</button>
-        </div>
+        <form
+          onSubmit={evt => {
+            evt.preventDefault();
+            changeQuery(evt.target.elements.query.value);
+            evt.target.reset();
+          }}
+        >
+          <input type="text" name="query" />
+          <button type="submit">Submit</button>
+        </form>
       </div>
-    );
-  }
-}
+
+      <div>Gallery</div>
+
+      <div>
+        <button onClick={handleLoadMore}>Load more</button>
+      </div>
+    </div>
+  );
+};
