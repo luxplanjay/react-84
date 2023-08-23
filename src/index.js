@@ -3,7 +3,6 @@ import ReactDOM from 'react-dom/client';
 import { ThemeProvider } from 'styled-components';
 import { GlobalStyle } from 'components/GlobalStyle';
 import { App } from 'components/App';
-// import { ImageApp } from 'ImageApp';
 
 const theme = {
   colors: {
@@ -16,11 +15,10 @@ const theme = {
 };
 
 ReactDOM.createRoot(document.getElementById('root')).render(
-  <React.StrictMode>
-    <ThemeProvider theme={theme}>
-      <App />
-      {/* <ImageApp /> */}
-      <GlobalStyle />
-    </ThemeProvider>
-  </React.StrictMode>
+  // <React.StrictMode>
+  <ThemeProvider theme={theme}>
+    <App />
+    <GlobalStyle />
+  </ThemeProvider>
+  // </React.StrictMode>
 );
