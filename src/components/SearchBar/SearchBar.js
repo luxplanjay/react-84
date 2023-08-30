@@ -1,10 +1,13 @@
 import { Wrapper } from './SearchBar.styled';
+import { useQueryParams } from 'hooks/useQueryParams';
 
-export const SearchBar = ({ onReset, children }) => {
+export const SearchBar = ({ children }) => {
+  const { reset } = useQueryParams();
+
   return (
     <Wrapper>
       {children}
-      <button onClick={onReset}>Reset filters</button>
+      <button onClick={reset}>Reset filters</button>
     </Wrapper>
   );
 };

@@ -1,9 +1,13 @@
-export const TopicFilter = ({ value, onChange }) => {
+import { useQueryParams } from 'hooks/useQueryParams';
+
+export const TopicFilter = () => {
+  const { topic, changeTopic } = useQueryParams();
+
   return (
     <input
       type="text"
-      value={value}
-      onChange={evt => onChange(evt.target.value)}
+      value={topic}
+      onChange={evt => changeTopic(evt.target.value)}
     />
   );
 };
