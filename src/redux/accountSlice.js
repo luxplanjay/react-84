@@ -6,27 +6,34 @@ const slice = createSlice({
     balance: 100,
   },
   reducers: {
-    deposit(state, action) {
-      state.balance += action.payload;
+    deposit: {
+      reducer(state, action) {
+        state.balance += action.payload;
+      },
+      prepare(value) {
+        return {
+          payload: value,
+          meta: {
+            ga: true,
+          },
+        };
+      },
     },
-    withdraw(state, action) {
-      state.balance -= action.payload;
+    withdraw: {
+      reducer(state, action) {
+        state.balance -= action.payload;
+      },
+      prepare(value) {
+        return {
+          payload: value,
+          meta: {
+            log: true,
+          },
+        };
+      },
     },
   },
 });
 
 export const accountReducer = slice.reducer;
 export const { deposit, withdraw } = slice.actions;
-
-// export const deposit = createAction('account/deposit');
-// export const withdraw = createAction('account/withdraw');
-
-// export const accountReducer = createReducer({ balance: 100 }, builder =>
-//   builder
-//     .addCase(deposit, (state, action) => {
-//       state.balance += action.payload;
-//     })
-//     .addCase(withdraw, (state, action) => {
-//       state.balance -= action.payload;
-//     })
-// );
